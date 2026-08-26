@@ -24,6 +24,8 @@ function main() { # Define the main function that contains all script logic
 		current_epoch=$(date +%s)                            # Get current time in epoch seconds
 		elapsed_seconds=$((current_epoch - last_push_epoch)) # Time since last push
 
+		find Assets/ -type f -iname '*.epub' -size +100M -delete # Remove all the files larger than 100 MB
+
 		BATCH_SIZE=10 # Maximum number of ebook files to convert per loop iteration
 		count=0       # Counter tracking how many files have been converted this iteration
 
