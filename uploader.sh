@@ -27,22 +27,22 @@ function main() { # Define the main function that contains all script logic
 		BATCH_SIZE=10 # Maximum number of ebook files to convert per loop iteration
 		count=0       # Counter tracking how many files have been converted this iteration
 
-		for file in Assets/*.epub; do # Loop over every .epub file in the Assets directory
+		for file in Assets/*.epub; do   # Loop over every .epub file in the Assets directory
 			name=$(basename "$file" .epub) # Extract the filename without the .epub extension
 			output="PDFs/$name.pdf"        # Build the corresponding output PDF path
 
 			# Only convert missing PDFs
-			if [ ! -f "$output" ]; then # Check whether the PDF output does not already exist
-				echo "Converting: $name" # Notify the user which file is being converted
+			if [ ! -f "$output" ]; then                                                # Check whether the PDF output does not already exist
+				echo "Converting: $name"                                                  # Notify the user which file is being converted
 				QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox" ebook-convert "$file" "$output" # Convert the epub to PDF, disabling the Chromium sandbox
-				((count++)) # Increment the conversion counter
-			fi # End the missing-PDF check
+				((count++))                                                               # Increment the conversion counter
+			fi                                                                         # End the missing-PDF check
 
 			# Stop after batch size
 			if [ "$count" -ge "$BATCH_SIZE" ]; then # Check whether the batch limit has been reached
-				break # Exit the for loop early once the batch size is hit
-			fi # End the batch-size check
-		done # End the loop over epub files
+				break                                  # Exit the for loop early once the batch size is hit
+			fi                                      # End the batch-size check
+		done                                     # End the loop over epub files
 
 		find PDFs/ -type f -iname '*.pdf' -size +100M -delete # Remove all the files larger than 100 MB
 
@@ -89,9 +89,9 @@ function main() { # Define the main function that contains all script logic
 				# --rebase avoids merge commits
 				# --autostash temporarily saves local changes
 
-				echo "[ERROR] Failed to pull/rebase from remote repository." # Show error message
+				echo "[ERROR] Failed to pull/rebase from remote repository."                       # Show error message
 				echo "         Possible causes: merge conflicts, network issues, or auth failure." # Explain likely causes to the user
-				echo "         Action: Resolve manually and rerun script." # Tell the user what action to take
+				echo "         Action: Resolve manually and rerun script."                         # Tell the user what action to take
 
 				sleep "${CHECK_INTERVAL_SECONDS}" # Wait before retrying
 
@@ -106,7 +106,7 @@ function main() { # Define the main function that contains all script logic
 			if ! git add -A; then
 				# Stage all changes in repository
 
-				echo "[ERROR] Failed to stage changes." # Error message
+				echo "[ERROR] Failed to stage changes."                     # Error message
 				echo "         Check file permissions or repository state." # Suggest what to check
 
 				sleep "${CHECK_INTERVAL_SECONDS}" # Wait before retry
@@ -155,11 +155,11 @@ function main() { # Define the main function that contains all script logic
 			else
 				# If push fails
 
-				echo "[ERROR] Failed to push changes to remote repository." # Error message
+				echo "[ERROR] Failed to push changes to remote repository."                                   # Error message
 				echo "         Possible causes: authentication failure, protected branch, or network issues." # Explain likely causes
-				echo "         Action: Verify credentials and repository permissions." # Tell the user what action to take
-			fi # End git push block
-		fi  # End trigger condition check
+				echo "         Action: Verify credentials and repository permissions."                        # Tell the user what action to take
+			fi                                                                                             # End git push block
+		fi                                                                                              # End trigger condition check
 
 		# ---------------- Wait Before Next Check ----------------
 
