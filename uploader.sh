@@ -24,18 +24,29 @@ function main() { # Define the main function that contains all script logic
 		current_epoch=$(date +%s)                            # Get current time in epoch seconds
 		elapsed_seconds=$((current_epoch - last_push_epoch)) # Time since last push
 
-		find PDFs/ -type f -iname '*.pdf' -size +100M -delete # Remove all the files larger than 100 MB
+		BATCH_SIZE=10
+		count=0
 
 		for file in Assets/*.epub; do
 			name=$(basename "$file" .epub)
+			output="PDFs/$name.pdf"
 
-			if [ -f "PDFs/$name.pdf" ]; then
-				echo "Skipping: $file"
-			else
-				echo "Converting: $file"
-				ebook-convert "$file" "PDFs/$name.pdf"
+			# Only convert missing PDFs
+			if [ ! -f "$output" ]; then
+				echo "Converting: $name"
+				QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox --disable-gpu" \
+					ebook-convert "$file" "$output"
+
+				((count++))
+			fi
+
+			# Stop after batch size
+			if [ "$count" -ge "$BATCH_SIZE" ]; then
+				break
 			fi
 		done
+
+		find PDFs/ -type f -iname '*.pdf' -size +100M -delete # Remove all the files larger than 100 MB
 
 		changed_files_count=$(git status --porcelain -uall | wc -l)
 		# Get list of changed files from git and count them
