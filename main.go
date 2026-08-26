@@ -158,7 +158,9 @@ func main() { // program execution starts here
 
 	retryBackoffBase := 2 * time.Second // local variable: the starting wait time before a retry, which grows with each attempt
 
+	/*
 	notFoundPhrase := "No ebook by that number." // local variable: the phrase gutenberg shows on its "not found" page
+	*/
 
 	assetsDir := "Assets" // local variable: the folder where downloaded epub files are saved
 
