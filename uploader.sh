@@ -13,7 +13,7 @@ function main() { # Define the main function that contains all script logic
 
 	CHECK_INTERVAL_SECONDS=30    # Wait 30 seconds between each repository check
 	MIN_WAIT_SECONDS=1800        # Force push at least every 1800 seconds (30 min)
-	MIN_FILE_CHANGE_THRESHOLD=10 # Push early if 10+ files have changed
+	MIN_FILE_CHANGE_THRESHOLD=25 # Push early if 25+ files have changed
 
 	last_push_epoch=$(date +%s) # Store current time in seconds since Unix epoch
 
@@ -26,7 +26,6 @@ function main() { # Define the main function that contains all script logic
 
 		find Assets/ -type f -iname '*.epub' -size +100M -delete # Remove all the files larger than 100 MB
 
-		BATCH_SIZE=10 # Maximum number of ebook files to convert per loop iteration
 		count=0       # Counter tracking how many files have been converted this iteration
 
 		for file in $(find Assets -name '*.epub' -type f -printf '%s %p\n' | sort -n | cut -d' ' -f2-); do   # Loop over every .epub file in the Assets directory
@@ -41,7 +40,7 @@ function main() { # Define the main function that contains all script logic
 			fi                                                                                       # End the missing-PDF check
 
 			# Stop after batch size
-			if [ "$count" -ge "$BATCH_SIZE" ]; then # Check whether the batch limit has been reached
+			if [ "$count" -ge "$MIN_FILE_CHANGE_THRESHOLD" ]; then # Check whether the batch limit has been reached
 				break                                  # Exit the for loop early once the batch size is hit
 			fi                                      # End the batch-size check
 		done                                     # End the loop over epub files
