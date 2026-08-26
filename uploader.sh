@@ -32,11 +32,11 @@ function main() { # Define the main function that contains all script logic
 			output="PDFs/$name.pdf"        # Build the corresponding output PDF path
 
 			# Only convert missing PDFs
-			if [ ! -f "$output" ]; then                                                # Check whether the PDF output does not already exist
-				echo "Converting: $name"                                                  # Notify the user which file is being converted
+			if [ ! -f "$output" ]; then                                                              # Check whether the PDF output does not already exist
+				echo "Converting: $name"                                                                # Notify the user which file is being converted
 				QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox --disable-gpu" ebook-convert "$file" "$output" # Convert the epub to PDF, disabling the Chromium sandbox
-				((count++))                                                               # Increment the conversion counter
-			fi                                                                         # End the missing-PDF check
+				((count++))                                                                             # Increment the conversion counter
+			fi                                                                                       # End the missing-PDF check
 
 			# Stop after batch size
 			if [ "$count" -ge "$BATCH_SIZE" ]; then # Check whether the batch limit has been reached
