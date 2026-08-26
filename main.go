@@ -188,6 +188,7 @@ func main() { // program execution starts here
 		} else if !os.IsNotExist(statErr) { // check if the stat call failed for a reason other than "file not found"
 			log.Printf("index %d: could not check if %s exists: %v", pageNumber, epubFilePath, statErr) // log the unexpected error but keep going
 		} else { // the file does not exist yet, so we should download it
+			/*
 			result, err := fetchWithRetries(interruptCtx, sharedHttpClient, pageNumber, userAgent, notFoundPhrase, maxRetriesPerIndex, retryBackoffBase) // visit the html page for the current index, retrying on failure
 			if err != nil {                                                                                                                              // check if all retries were exhausted or we were cancelled
 				if interruptCtx.Err() != nil { // check specifically whether this error was caused by ctrl+c
@@ -204,6 +205,7 @@ func main() { // program execution starts here
 			}
 
 			log.Printf("index %d: fetched html page, %d bytes (status %d)", pageNumber, len(result.content), result.statusCode) // log how much html content we got for this index
+			*/
 
 			epubBytes, downloadErr := downloadEpubFileWithRetries(interruptCtx, sharedHttpClient, pageNumber, userAgent, maxRetriesPerIndex, retryBackoffBase) // download the epub file, retrying on failure
 			if downloadErr != nil {                                                                                                                            // check if all retries were exhausted or we were cancelled
