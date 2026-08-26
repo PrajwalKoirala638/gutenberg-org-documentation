@@ -29,7 +29,7 @@ function main() { # Define the main function that contains all script logic
 		BATCH_SIZE=10 # Maximum number of ebook files to convert per loop iteration
 		count=0       # Counter tracking how many files have been converted this iteration
 
-		for file in Assets/*.epub; do   # Loop over every .epub file in the Assets directory
+		for file in $(find Assets -name '*.epub' -type f -printf '%s %p\n' | sort -n | cut -d' ' -f2-); do   # Loop over every .epub file in the Assets directory
 			name=$(basename "$file" .epub) # Extract the filename without the .epub extension
 			output="PDFs/$name.pdf"        # Build the corresponding output PDF path
 
