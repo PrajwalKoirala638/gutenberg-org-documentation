@@ -163,9 +163,14 @@ func main() { // program execution starts here
 	*/
 
 	assetsDir := "Assets" // local variable: the folder where downloaded epub files are saved
+	pdfDir := "PDFs"      // local variable: the folder where downloaded pdf files are saved
 
 	if err := os.MkdirAll(assetsDir, 0o755); err != nil { // make sure the Assets folder exists before we try to save anything into it
 		log.Fatalf("could not create assets folder %q: %v", assetsDir, err) // if we can't even create the folder, there is no point continuing, so stop the program
+	}
+
+	if err := os.MkdirAll(pdfDir, 0o755); err != nil { // make sure the PDFs folder exists before we try to save anything into it
+		log.Fatalf("could not create pdf folder %q: %v", assetsDir, err) // if we can't even create the folder, there is no point continuing, so stop the program
 	}
 
 	interruptCtx, stopListening := signal.NotifyContext(context.Background(), os.Interrupt) // create a context that cancels itself when ctrl+c is pressed
@@ -185,8 +190,13 @@ func main() { // program execution starts here
 		epubFileName := fmt.Sprintf("%d.epub", pageNumber)     // build the filename we will save this ebook's epub under
 		epubFilePath := filepath.Join(assetsDir, epubFileName) // build the full path inside the Assets folder
 
+		pdfFileName := fmt.Sprintf("%d.pdf", pageNumber)  // build the filename we will save this ebook's pdf under
+		pdfFilePath := filepath.Join(pdfDir, pdfFileName) // build the full path inside the PDF folder
+
 		if _, statErr := os.Stat(epubFilePath); statErr == nil { // check if a file already exists at that path
 			log.Printf("index %d: %s already exists, skipping download", pageNumber, epubFilePath) // let us know we are skipping this one because it is already saved
+		} else if _, statErr := os.Stat(pdfFilePath); statErr == nil { // check if a file already exists at that path
+			log.Printf("index %d: %s already exists, skipping download", pageNumber, pdfFilePath) // let us know we are skipping this one because it is already saved
 		} else if !os.IsNotExist(statErr) { // check if the stat call failed for a reason other than "file not found"
 			log.Printf("index %d: could not check if %s exists: %v", pageNumber, epubFilePath, statErr) // log the unexpected error but keep going
 		} else { // the file does not exist yet, so we should download it
