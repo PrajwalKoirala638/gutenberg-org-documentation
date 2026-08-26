@@ -159,7 +159,7 @@ func main() { // program execution starts here
 	retryBackoffBase := 2 * time.Second // local variable: the starting wait time before a retry, which grows with each attempt
 
 	/*
-	notFoundPhrase := "No ebook by that number." // local variable: the phrase gutenberg shows on its "not found" page
+		notFoundPhrase := "No ebook by that number." // local variable: the phrase gutenberg shows on its "not found" page
 	*/
 
 	assetsDir := "Assets" // local variable: the folder where downloaded epub files are saved
@@ -174,7 +174,7 @@ func main() { // program execution starts here
 	sharedHttpClient := &http.Client{Timeout: requestTimeout} // create one http client here and reuse it for every request, so tcp connections can be reused
 
 	var pageNumber int
-	
+
 	for pageNumber = 1; ; pageNumber++ { // start counting from 1 and increase forever, no upper limit
 
 		if interruptCtx.Err() != nil { // check if ctrl+c was pressed before we even start this iteration
@@ -182,8 +182,8 @@ func main() { // program execution starts here
 			break                                                                      // exit the loop without starting a new request
 		}
 
-		epubFileName := fmt.Sprintf("%d.epub3.images", pageNumber) // build the filename we will save this ebook's epub under
-		epubFilePath := filepath.Join(assetsDir, epubFileName)     // build the full path inside the Assets folder
+		epubFileName := fmt.Sprintf("%d.epub", pageNumber)     // build the filename we will save this ebook's epub under
+		epubFilePath := filepath.Join(assetsDir, epubFileName) // build the full path inside the Assets folder
 
 		if _, statErr := os.Stat(epubFilePath); statErr == nil { // check if a file already exists at that path
 			log.Printf("index %d: %s already exists, skipping download", pageNumber, epubFilePath) // let us know we are skipping this one because it is already saved
@@ -191,22 +191,22 @@ func main() { // program execution starts here
 			log.Printf("index %d: could not check if %s exists: %v", pageNumber, epubFilePath, statErr) // log the unexpected error but keep going
 		} else { // the file does not exist yet, so we should download it
 			/*
-			result, err := fetchWithRetries(interruptCtx, sharedHttpClient, pageNumber, userAgent, notFoundPhrase, maxRetriesPerIndex, retryBackoffBase) // visit the html page for the current index, retrying on failure
-			if err != nil {                                                                                                                              // check if all retries were exhausted or we were cancelled
-				if interruptCtx.Err() != nil { // check specifically whether this error was caused by ctrl+c
-					log.Printf("shutdown requested, stopping cleanly at index %d", pageNumber) // log the clean shutdown point
-					break                                                                      // exit the loop since the user asked us to stop
+				result, err := fetchWithRetries(interruptCtx, sharedHttpClient, pageNumber, userAgent, notFoundPhrase, maxRetriesPerIndex, retryBackoffBase) // visit the html page for the current index, retrying on failure
+				if err != nil {                                                                                                                              // check if all retries were exhausted or we were cancelled
+					if interruptCtx.Err() != nil { // check specifically whether this error was caused by ctrl+c
+						log.Printf("shutdown requested, stopping cleanly at index %d", pageNumber) // log the clean shutdown point
+						break                                                                      // exit the loop since the user asked us to stop
+					}
+					log.Printf("index %d: giving up on html page after %d attempts: %v", pageNumber, maxRetriesPerIndex, err) // log that we gave up on this index entirely
+					continue                                                                                                  // move on to the next number
 				}
-				log.Printf("index %d: giving up on html page after %d attempts: %v", pageNumber, maxRetriesPerIndex, err) // log that we gave up on this index entirely
-				continue                                                                                                  // move on to the next number
-			}
 
-			if result.notFound { // check if either the status code or the page text told us this ebook does not exist
-				log.Printf("index %d: no ebook found (status %d), stopping loop", pageNumber, result.statusCode) // log that we found the stopping point
-				break                                                                                            // exit the for loop completely
-			}
+				if result.notFound { // check if either the status code or the page text told us this ebook does not exist
+					log.Printf("index %d: no ebook found (status %d), stopping loop", pageNumber, result.statusCode) // log that we found the stopping point
+					break                                                                                            // exit the for loop completely
+				}
 
-			log.Printf("index %d: fetched html page, %d bytes (status %d)", pageNumber, len(result.content), result.statusCode) // log how much html content we got for this index
+				log.Printf("index %d: fetched html page, %d bytes (status %d)", pageNumber, len(result.content), result.statusCode) // log how much html content we got for this index
 			*/
 
 			epubBytes, downloadErr := downloadEpubFileWithRetries(interruptCtx, sharedHttpClient, pageNumber, userAgent, maxRetriesPerIndex, retryBackoffBase) // download the epub file, retrying on failure
