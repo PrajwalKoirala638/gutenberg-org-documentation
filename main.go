@@ -150,7 +150,7 @@ func downloadEpubFileWithRetries(ctx context.Context, httpClient *http.Client, e
 func main() { // program execution starts here
 	requestTimeout := 3 * time.Minute // local variable: how long we wait before giving up on a single request
 
-	userAgent := "Mozilla/5.0 (compatible; GutenbergCrawler/1.0; +https://example.com/bot)" // local variable: identifies our program to the server we are visiting
+	userAgent := "Mozilla/5.0 (X11; CrOS x86_64 14541.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36" // local variable: identifies our program to the server we are visiting
 
 	delayBetweenRequests := 2 * time.Second // local variable: how long we pause between each ebook page visit, to be polite to the server
 
