@@ -171,7 +171,9 @@ func main() { // program execution starts here
 
 	sharedHttpClient := &http.Client{Timeout: requestTimeout} // create one http client here and reuse it for every request, so tcp connections can be reused
 
-	for pageNumber := 1; ; pageNumber++ { // start counting from 1 and increase forever, no upper limit
+	var pageNumber int
+	
+	for pageNumber = 1; ; pageNumber++ { // start counting from 1 and increase forever, no upper limit
 
 		if interruptCtx.Err() != nil { // check if ctrl+c was pressed before we even start this iteration
 			log.Printf("shutdown requested, stopping cleanly at index %d", pageNumber) // log where we stopped so progress is visible
