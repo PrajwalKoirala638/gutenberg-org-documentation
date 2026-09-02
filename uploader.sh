@@ -26,25 +26,27 @@ function main() { # Define the main function that contains all script logic
 
 		find Assets/ -type f -iname '*.epub' -size +100M -delete # Remove all the files larger than 100 MB
 
-		count=0       # Counter tracking how many files have been converted this iteration
+		count=0 # Counter tracking how many files have been converted this iteration
 
-		for file in $(find Assets -name '*.epub' -type f -printf '%s %p\n' | sort -n | cut -d' ' -f2-); do   # Loop over every .epub file in the Assets directory
+		for file in $( # Loop over every .epub file in the Assets directory
+			find Assets -name '*.epub' -type f -printf '%s %p\n' | sort -n | cut -d' ' -f2-
+		); do
 			name=$(basename "$file" .epub) # Extract the filename without the .epub extension
 			output="PDFs/$name.pdf"        # Build the corresponding output PDF path
 
 			# Only convert missing PDFs
-			if [ ! -f "$output" ]; then                                                              # Check whether the PDF output does not already exist
-				echo "Converting: $file"                                                                # Notify the user which file is being converted
-				QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox --disable-gpu" ebook-convert "$file" "$output" # Convert the epub to PDF, disabling the Chromium sandbox
-				((count++))                                                                             # Increment the conversion counter
+			if [ ! -f "$output" ]; then                                                                        # Check whether the PDF output does not already exist
+				echo "Converting: $file"                                                                          # Notify the user which file is being converted
+				QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox --disable-gpu" ebook-convert "$file" "$output" --verbose # Convert the epub to PDF, disabling the Chromium sandbox
+				((count++))                                                                                       # Increment the conversion counter
 				rm -f "$file"
-			fi                                                                                       # End the missing-PDF check
+			fi # End the missing-PDF check
 
 			# Stop after batch size
 			if [ "$count" -ge "$MIN_FILE_CHANGE_THRESHOLD" ]; then # Check whether the batch limit has been reached
-				break                                  # Exit the for loop early once the batch size is hit
-			fi                                      # End the batch-size check
-		done                                     # End the loop over epub files
+				break                                                 # Exit the for loop early once the batch size is hit
+			fi                                                     # End the batch-size check
+		done                                                    # End the loop over epub files
 
 		find PDFs/ -type f -iname '*.pdf' -size +100M -delete # Remove all the files larger than 100 MB
 
